@@ -1,11 +1,13 @@
 import Head from "next/head";
 import Link from "next/link";
-
+import { SignInButton, SignOutButton, useUser } from "@clerk/nextjs";
 import { api } from "~/utils/api";
 
 export default function Home() {
   const hello = api.post.hello.useQuery({ text: "from tRPC" });
 
+  const user = useUser();
+  
   return (
     <>
       <Head>
@@ -45,6 +47,8 @@ export default function Home() {
           <p className="text-2xl text-white">
             {hello.data ? hello.data.greeting : "Loading tRPC query..."}
           </p>
+          <div> {!user.isSignedIn && <SignInButton />}{!!user.isSignedIn && <SignOutButton />}
+          </div>
         </div>
       </main>
     </>
