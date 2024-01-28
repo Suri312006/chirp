@@ -11,6 +11,8 @@ export const postRouter = createTRPCRouter({
       };
     }),
 
+  // public procedure generates a method for the client to call
+  // ANY ONE CAN CALL THESE
   create: publicProcedure
     .input(z.object({ name: z.string().min(1) }))
     .mutation(async ({ ctx, input }) => {
@@ -29,4 +31,7 @@ export const postRouter = createTRPCRouter({
       orderBy: { createdAt: "desc" },
     });
   }),
+  getAll: publicProcedure.query(({ ctx }) => {
+    return ctx.db.post.findMany();
+  })
 });

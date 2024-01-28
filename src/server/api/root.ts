@@ -6,6 +6,7 @@ import { createTRPCRouter } from "~/server/api/trpc";
  *
  * All routers added in /api/routers should be manually added here.
  */
+// so these are all the router things
 export const appRouter = createTRPCRouter({
   post: postRouter,
 });
