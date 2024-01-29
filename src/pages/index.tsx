@@ -1,7 +1,7 @@
 import Head from "next/head";
-import Link from "next/link";
 import { SignInButton, SignOutButton, useUser } from "@clerk/nextjs";
-import { RouterOutputs, api } from "~/utils/api";
+import { api } from "~/utils/api";
+import type { RouterOutputs, } from "~/utils/api";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime"
 
@@ -29,7 +29,7 @@ const PostView = (props: PostWithUser) => {
 
   return (
     <div key={post.id} className="flex font-bold border-b border-slate-400 p-4 gap-3">
-      <img className="h-14 w-14 rounded-full" src={author.profilePicture} />
+      <img className="h-14 w-14 rounded-full" src={author.profilePicture} alt="post author pfp"/>
       <div className="flex flex-col">
         <div className="flex text-slate-300 gap-2">
           <span>{`@${author.username} `}</span>
@@ -45,8 +45,6 @@ const PostView = (props: PostWithUser) => {
 }
 
 export default function Home() {
-  const hello = api.post.hello.useQuery({ text: "from tRPC" });
-
   const user = useUser();
   console.log(user)
   // never want a user to connect to the database directly, use tRPC to do that
