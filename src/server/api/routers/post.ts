@@ -63,7 +63,8 @@ export const postRouter = createTRPCRouter({
   // using zod to validate the shape of the input
   // this is equivalent to an api endpoint
   create: privateProcedure.input(z.object({
-    content: z.string().emoji().min(1).max(280),
+    // custom error message 
+    content: z.string().emoji("Only emojis are allowed!").min(1).max(280),
   }))
     .mutation(async ({ ctx, input }) => {
       // since we defined the trpc middle ware in trpc.js, we know that current

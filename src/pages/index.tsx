@@ -5,26 +5,35 @@ import type { RouterOutputs, } from "~/utils/api";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime"
 import Image from "next/image";
-import { LoadingPage, } from "~/components/loading";
+import { LoadingPage, LoadingSpinner, } from "~/components/loading";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { P } from "node_modules/@upstash/redis/zmscore-a4ec4c2a";
 dayjs.extend(relativeTime)
 
 const CreatePostWizard = () => {
   // the useUser was defined gobally in _app.tsx
   const { user } = useUser();
   const [input, setInput] = useState("");
-  
+
   const ctx = api.useUtils();
   // this is for mutations? which im not too sure about
   const { mutate, isLoading: isPosting } = api.post.create.useMutation({
-    onSuccess: async() =>{
+    onSuccess: async () => {
       setInput("");
       // i dont know exactly how this works?
       await ctx.post.getAll.invalidate()
     },
-    onError: (e)=>{
-toast.error("Failed to post! Please try again later.")
+    onError: (e) => {
+      const errorMessage = e.data?.zodError?.fieldErrors.content;
+
+      if (errorMessage?.[0]) {
+        toast.error(errorMessage[0])
+
+      } else {
+
+        toast.error("Failed to post! Please try again later.")
+      }
     }
   });
 
@@ -39,10 +48,30 @@ toast.error("Failed to post! Please try again later.")
         type="text"
         value={input}
         onChange={(e) => setInput(e.target.value)}
-        disabled={isPosting}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            e.preventDefault()
+            if (input !== ""){
+              mutate({content: input})
+            }
+            
+          }
+        }}
       />
 
-      <button onClick={()=>mutate({content: input})}>Post</button>
+      {input !== "" && !isPosting && (
+        <button disabled={isPosting} onClick={() => mutate({ content: input })}>Post</button>
+      )}
+
+      {isPosting &&
+        (
+          <div className="flex justify-center items-center">
+            <LoadingSpinner size={20} />
+          </div>
+
+        )
+      }
+
     </div>
   )
 
