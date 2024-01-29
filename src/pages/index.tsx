@@ -13,8 +13,15 @@ const CreatePostWizard = () => {
   // the useUser was defined gobally in _app.tsx
   const { user } = useUser();
   const [input, setInput] = useState("");
+  
+  const ctx = api.useUtils();
   // this is for mutations? which im not too sure about
-  const { mutate } = api.post.create.useMutation();
+  const { mutate, isLoading: isPosting } = api.post.create.useMutation({
+    onSuccess: async() =>{
+      setInput("");
+      await ctx.post.getAll.invalidate()
+    }
+  });
 
   if (!user) return null;
 
@@ -27,6 +34,7 @@ const CreatePostWizard = () => {
         type="text"
         value={input}
         onChange={(e) => setInput(e.target.value)}
+        disabled={isPosting}
       />
 
       <button onClick={()=>mutate({content: input})}>Post</button>
