@@ -6,19 +6,30 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime"
 import Image from "next/image";
 import { LoadingPage, } from "~/components/loading";
-
+import { useState } from "react";
 dayjs.extend(relativeTime)
 
 const CreatePostWizard = () => {
   // the useUser was defined gobally in _app.tsx
   const { user } = useUser();
+  const [input, setInput] = useState("");
+  // this is for mutations? which im not too sure about
+  const { mutate } = api.post.create.useMutation();
 
   if (!user) return null;
 
   return (
     <div className="flex gap-3 w-full">
       <Image width={56} height={56} className="h-14 w-14 rounded-full" src={user.imageUrl} alt="Profile Image" />
-      <input className="bg-transparent grow outline-none " placeholder="Type Some emojis.. " />
+      <input
+        className="bg-transparent grow outline-none "
+        placeholder="Type Some emojis.. "
+        type="text"
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+      />
+
+      <button onClick={()=>mutate({content: input})}>Post</button>
     </div>
   )
 
@@ -39,7 +50,7 @@ const PostView = (props: PostWithUser) => {
 
 
         </div>
-        <span>{post.content}</span>
+        <span className="text-2xl">{post.content}</span>
       </div>
     </div>
 
@@ -65,7 +76,7 @@ const Feed = () => {
 }
 
 export default function Home() {
-  const { user, isLoaded: userLoaded , isSignedIn} = useUser();
+  const { user, isLoaded: userLoaded, isSignedIn } = useUser();
   console.log(user)
   // never want a user to connect to the database directly, use tRPC to do that
 
@@ -100,7 +111,7 @@ export default function Home() {
             {!!isSignedIn && <SignOutButton />}
           </div>
 
-          <Feed/>
+          <Feed />
 
 
 
