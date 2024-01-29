@@ -2,6 +2,10 @@ import Head from "next/head";
 import Link from "next/link";
 import { SignInButton, SignOutButton, useUser } from "@clerk/nextjs";
 import { RouterOutputs, api } from "~/utils/api";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime"
+
+dayjs.extend(relativeTime)
 
 const CreatePostWizard = () => {
   // the useUser was defined gobally in _app.tsx
@@ -29,7 +33,8 @@ const PostView = (props: PostWithUser) => {
       <div className="flex flex-col">
         <div className="flex text-slate-300 gap-2">
           <span>{`@${author.username} `}</span>
-          <span className="font-light">{`  ·  1 hour ago`}</span>
+          <span className="font-light">{`  ·  ${dayjs(post.createdAt).fromNow()}`}</span>
+
 
         </div>
         <span>{post.content}</span>
@@ -38,12 +43,6 @@ const PostView = (props: PostWithUser) => {
 
   )
 }
-
-
-
-
-
-
 
 export default function Home() {
   const hello = api.post.hello.useQuery({ text: "from tRPC" });
