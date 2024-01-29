@@ -19,6 +19,7 @@ const CreatePostWizard = () => {
   const { mutate, isLoading: isPosting } = api.post.create.useMutation({
     onSuccess: async() =>{
       setInput("");
+      // i dont know exactly how this works?
       await ctx.post.getAll.invalidate()
     }
   });
