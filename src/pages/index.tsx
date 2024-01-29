@@ -5,6 +5,7 @@ import type { RouterOutputs, } from "~/utils/api";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime"
 import Image from "next/image";
+import { LoadingPage, } from "~/components/loading";
 
 dayjs.extend(relativeTime)
 
@@ -30,7 +31,7 @@ const PostView = (props: PostWithUser) => {
 
   return (
     <div key={post.id} className="flex font-bold border-b border-slate-400 p-4 gap-3">
-      <Image width={56} height={56} className="h-14 w-14 rounded-full" src={author.profilePicture} alt="post author pfp"/>
+      <Image width={56} height={56} className="h-14 w-14 rounded-full" src={author.profilePicture} alt="post author pfp" />
       <div className="flex flex-col">
         <div className="flex text-slate-300 gap-2">
           <span>{`@${author.username} `}</span>
@@ -45,15 +46,36 @@ const PostView = (props: PostWithUser) => {
   )
 }
 
+const Feed = () => {
+  const { data, isLoading: postsLoading } = api.post.getAll.useQuery();
+
+  if (postsLoading) return <LoadingPage />;
+
+  if (!data) return <div> Something went terribly wrong </div>
+
+  return (
+
+    <div className="flex flex-col">
+      {data?.map((fullPost) => (
+        <PostView {...fullPost} key={fullPost.post.id} />
+      ))}
+    </div>
+
+  )
+}
+
 export default function Home() {
-  const user = useUser();
+  const { user, isLoaded: userLoaded , isSignedIn} = useUser();
   console.log(user)
   // never want a user to connect to the database directly, use tRPC to do that
-  // wait this is so clean than supabase bro omg
-  const { data, isLoading } = api.post.getAll.useQuery();
 
-  if (isLoading) return <div> Loading.. </div>
-  if (!data) return <div> Something went terribly wrong </div>
+
+  //starts the fetch, so a later component can use the cache of this fetch?
+  api.post.getAll.useQuery();
+
+  //return empty div if both arent loaded, because user should load faster
+  if (!userLoaded) return <div />
+
 
 
   return (
@@ -69,20 +91,17 @@ export default function Home() {
         <div className="w-full md:max-w-2xl border-x border-slate-400">
 
           <div className="flex border-b border-slate-400 p-4 ">
-            {!user.isSignedIn && (
+            {!isSignedIn && (
               <div className="flex justify-center">
                 <SignInButton />
               </div>
             )}
-            {!!user.isSignedIn && <CreatePostWizard />}
-            {!!user.isSignedIn && <SignOutButton />}
+            {!!isSignedIn && <CreatePostWizard />}
+            {!!isSignedIn && <SignOutButton />}
           </div>
 
-          <div className="flex flex-col">
-            {data?.map((fullPost) => (
-              <PostView {...fullPost} key={fullPost.post.id} />
-            ))}
-          </div>
+          <Feed/>
+
 
 
         </div>
