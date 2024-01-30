@@ -73,6 +73,20 @@ export const postRouter = createTRPCRouter({
     }).then(addUserDataToPosts)
   }),
 
+  getById: publicProcedure.input(z.object({
+    postId: z.string()
+  })).query(async ({ ctx, input}) => {
+    const post = await ctx.db.post.findUnique({
+      where: {
+        id: input.postId
+      }
+    })
+
+    if (!post)  throw new TRPCError({code:"NOT_FOUND", message:"Message not found"})
+     
+    return (await addUserDataToPosts([post]))[0]
+  }),
+
   // using zod to validate the shape of the input
   // this is equivalent to an api endpoint
   create: privateProcedure.input(z.object({
