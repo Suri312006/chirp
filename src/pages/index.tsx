@@ -8,7 +8,7 @@ import Image from "next/image";
 import { LoadingPage, LoadingSpinner, } from "~/components/loading";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { P } from "node_modules/@upstash/redis/zmscore-a4ec4c2a";
+import Link from "next/link";
 dayjs.extend(relativeTime)
 
 const CreatePostWizard = () => {
@@ -87,8 +87,9 @@ const PostView = (props: PostWithUser) => {
       <Image width={56} height={56} className="h-14 w-14 rounded-full" src={author.profilePicture} alt="post author pfp" />
       <div className="flex flex-col">
         <div className="flex text-slate-300 gap-2">
-          <span>{`@${author.username} `}</span>
-          <span className="font-light">{`  ·  ${dayjs(post.createdAt).fromNow()}`}</span>
+          <Link href={`/@${author.username}`}><span>{`@${author.username} `}</span></Link>
+          <Link href={`post/${post.id}`}><span className="font-light">{`  ·  ${dayjs(post.createdAt).fromNow()}`}</span></Link>
+
 
 
         </div>
@@ -101,7 +102,7 @@ const PostView = (props: PostWithUser) => {
 
 const Feed = () => {
   const { data, isLoading: postsLoading } = api.post.getAll.useQuery();
-
+  
   if (postsLoading) return <LoadingPage />;
 
   if (!data) return <div> Something went terribly wrong </div>
@@ -119,7 +120,6 @@ const Feed = () => {
 
 export default function Home() {
   const { user, isLoaded: userLoaded, isSignedIn } = useUser();
-  console.log(user)
   // never want a user to connect to the database directly, use tRPC to do that
 
 

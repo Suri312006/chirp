@@ -99,6 +99,7 @@ const enforceUserIsAutherd = t.middleware(async ({ctx, next}) => {
   }
 
   // i have no clue how this works 
+  // just returning the context thats passed into the middleware
   return next({
     ctx: {
       currentUserId: ctx.currentUserId,
@@ -113,3 +114,5 @@ const enforceUserIsAutherd = t.middleware(async ({ctx, next}) => {
 // is going to run on the context / request to that procedure
 // meaning that we will always be checking if this user is autherticated.
 export const privateProcedure = t.procedure.use(enforceUserIsAutherd)
+
+

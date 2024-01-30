@@ -49,6 +49,8 @@ export const postRouter = createTRPCRouter({
     // whoa what the fuck is that parentesis before the object notation?? oh its an implicit return??
     return posts.map((post) => {
       const author = users.find((user) => user.id === post.authorId)
+      // there was some kind of error here, and i dont know why
+      console.log(author)
       if (!author?.username) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Author for message not found" }
       );
       return {
