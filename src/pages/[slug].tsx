@@ -12,6 +12,20 @@ import { LoadingPage } from "~/components/loading";
 dayjs.extend(relativeTime)
 import type { NextPage } from "next";
 import { PageLayout } from "~/components/customLayout";
+import PostView from "~/components/postview";
+import { useParams } from "next/navigation";
+
+const ProfileFeed = (props: { userId: string }) => {
+  const { data, isLoading } = api.post.getPostsByUserId.useQuery({ userId: props.userId })
+
+  if (isLoading) return <LoadingPage />
+
+  if (!data || data.length === 0) return <div> User has not posted! </div>
+  return data.map(postwauthor =>
+    (<PostView author={postwauthor.author} post={postwauthor.post} key={postwauthor.post.id} />))
+}
+
+
 
 
 export const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
@@ -46,12 +60,14 @@ export const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
 
         </div>
         <div className="h-[64px]" />
-        <div id='user info'className="p-4 text-2xl font-bold">
+        <div id='user info' className="p-4 border-b border-slate-600 text-2xl font-bold">
           {`@${data.username}`}
         </div>
 
 
-        <div className="border-b border-slate-600 w-full" /> 
+        <div className="border-b border-slate-600 w-full" >
+          <ProfileFeed userId={data.id} />
+        </div>
       </PageLayout>
     </>
   );
