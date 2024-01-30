@@ -135,7 +135,7 @@ export default function Home() {
     <>
       <Head>
         <title>
-          What the fuck gang
+          Chirp
         </title>
       </Head>
 

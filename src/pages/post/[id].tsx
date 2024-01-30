@@ -4,14 +4,16 @@ import { SignInButton, SignOutButton, useUser } from "@clerk/nextjs";
 import { api } from "~/utils/api";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime"
+import type { NextPage } from "next";
 dayjs.extend(relativeTime)
 
-export default function PostPage() {
+const SinglePostPage:NextPage = () => {
   return (
     <>
       <Head>
         <title>
-          What the fuck gang
+          {/* should show post name lmao*/}
+          Chirp - 
         </title>
       </Head>
 
@@ -25,3 +27,5 @@ export default function PostPage() {
     </>
   );
 }
+
+export default SinglePostPage;
