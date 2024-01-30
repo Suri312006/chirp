@@ -9,6 +9,7 @@ import { LoadingPage, LoadingSpinner, } from "~/components/loading";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import Link from "next/link";
+import { PageLayout } from "~/components/customLayout";
 dayjs.extend(relativeTime)
 
 const CreatePostWizard = () => {
@@ -51,10 +52,10 @@ const CreatePostWizard = () => {
         onKeyDown={(e) => {
           if (e.key === "Enter") {
             e.preventDefault()
-            if (input !== ""){
-              mutate({content: input})
+            if (input !== "") {
+              mutate({ content: input })
             }
-            
+
           }
         }}
       />
@@ -102,7 +103,7 @@ const PostView = (props: PostWithUser) => {
 
 const Feed = () => {
   const { data, isLoading: postsLoading } = api.post.getAll.useQuery();
-  
+
   if (postsLoading) return <LoadingPage />;
 
   if (!data) return <div> Something went terribly wrong </div>
@@ -139,26 +140,19 @@ export default function Home() {
         </title>
       </Head>
 
-      <main className="flex justify-center h-screen">
-
-        <div className="w-full md:max-w-2xl border-x border-slate-400">
-
-          <div className="flex border-b border-slate-400 p-4 ">
-            {!isSignedIn && (
-              <div className="flex justify-center">
-                <SignInButton />
-              </div>
-            )}
-            {!!isSignedIn && <CreatePostWizard />}
-            {!!isSignedIn && <SignOutButton />}
+      <PageLayout> <div>
+        <div className="flex border-y border-slate-400 p-4">
+        {!isSignedIn && (
+          <div className="flex justify-center">
+            <SignInButton />
           </div>
-
-          <Feed />
-
-
-
+        )}
+        {!!isSignedIn && <CreatePostWizard />}
+        {!!isSignedIn && <SignOutButton />}
         </div>
-      </main>
+        <Feed />
+      </div>
+      </PageLayout>
     </>
   );
 }
